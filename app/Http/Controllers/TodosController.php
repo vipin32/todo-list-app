@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Todos;
 
 class TodosController extends Controller
 {
@@ -13,7 +14,10 @@ class TodosController extends Controller
      */
     public function index()
     {
-        
+
+        $todos = Todos::latest()->get();
+        // dd($todos);
+        return view('todos.index', ['todos'=> $todos]);
     }
 
     /**
@@ -23,7 +27,7 @@ class TodosController extends Controller
      */
     public function create()
     {
-        //
+        return view('todos.create');
     }
 
     /**
@@ -34,7 +38,22 @@ class TodosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'todo-text'=> 'required',
+            'todo-body'=> 'required',
+            'todo-date'=> 'required'
+        ]);
+
+
+        $todo = new Todos;
+        $todo->text = $request->input('todo-text');
+        $todo->body = $request->input('todo-body');
+        $todo->due = $request->input('todo-date');
+
+        if($todo->save())
+        {
+            return redirect()->route('todo.index')->with('success', 'Todo Created Successfully');
+        }
     }
 
     /**
@@ -45,7 +64,8 @@ class TodosController extends Controller
      */
     public function show($id)
     {
-        //
+        $todo = Todos::find($id);
+        return view('todos.show', ['todo'=> $todo]);
     }
 
     /**
@@ -56,7 +76,9 @@ class TodosController extends Controller
      */
     public function edit($id)
     {
-        //
+        $todo = Todos::find($id);
+        return view('todos.edit', ['todo'=> $todo]);
+        
     }
 
     /**
@@ -68,7 +90,22 @@ class TodosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'todo-text'=> 'required',
+            'todo-body'=> 'required',
+            'todo-date'=> 'required'
+        ]);
+
+
+        $todo = Todos::find($id);
+        $todo->text = $request->input('todo-text');
+        $todo->body = $request->input('todo-body');
+        $todo->due = $request->input('todo-date');
+
+        if($todo->update())
+        {
+            return redirect()->route('todo.index')->with('success', 'Todo Updated Successfully');
+        }
     }
 
     /**
@@ -79,6 +116,11 @@ class TodosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $todo = Todos::find($id);
+
+        if($todo->delete())
+        {
+            return redirect()->route('todo.index')->with('success', 'Todo Deleted Successfully');
+        }
     }
 }
