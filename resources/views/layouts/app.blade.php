@@ -18,7 +18,7 @@
         @yield('content')
     </div>
 
-    <footer id="footer" class="text-center">
+    <footer id="footer" class="text-center mt-3">
         <p>Copyright &copy; {{date('Y')}}</p>   
     </footer>
 
